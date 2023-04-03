@@ -10,6 +10,9 @@ import { createColour } from "./helpers/createColour";
 
 import { Setter } from "./setters/basicSetter";
 import { SphereBuilder } from "./builders/sphereBuilder";
+
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
@@ -38,6 +41,8 @@ const renderer = new THREE.WebGL1Renderer({
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
+
+let controls = new OrbitControls(camera, renderer.domElement)
 
 let width = 3;
 
@@ -96,6 +101,8 @@ scene.add(axesHelper);
 
 function animate() {
   requestAnimationFrame(animate)
+
+  controls.update()
 
   ray.setFromCamera(pointer, camera);
 
