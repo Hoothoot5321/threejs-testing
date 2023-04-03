@@ -8,6 +8,8 @@ import { CubeBuilder } from "./builders/cubeBuilder";
 
 import { createColour } from "./helpers/createColour";
 
+import { Setter } from "./setters/basicSetter";
+import { SphereBuilder } from "./builders/sphereBuilder";
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
@@ -47,15 +49,14 @@ let distance = 20;
 
 let size = 10;
 
-let objects: THREE.Mesh<THREE.BoxGeometry, THREE.MeshStandardMaterial>[] = [];
-
+let objects: THREE.Mesh<any, any>[] = [];
 for (let x = 0; x < width; x++) {
   for (let y = 0; y < height; y++) {
     for (let z = 0; z < length; z++) {
-      let cube = new CubeBuilder()
+      let cube = new Setter()
         .setSize(size)
         .setPos({ x: (-(distance * ((width - 1) / 2)) + x * distance), y: (-(distance * ((height - 1) / 2)) + y * distance), z: ((-(distance * ((length - 1) / 2)) + z * distance)) })
-        .build()
+        .build(new CubeBuilder())
       objects.push(cube)
       scene.add(cube)
     }
@@ -79,7 +80,7 @@ pointLight.position.set(-30, 30, 30);
 
 const ambientLight = new THREE.AmbientLight(colours.White, 0.5)
 
-let suiCube = new CubeBuilder().setColour({ r: 125, g: 125, b: 255 }).setSize(5).setPos({ x: 75, y: 75, z: -75 }).build()
+let suiCube = new Setter().setColour({ r: 122, g: 122, b: 255 }).setSize(5).build(new SphereBuilder)
 
 scene.add(suiCube)
 
@@ -98,9 +99,11 @@ function animate() {
 
   ray.setFromCamera(pointer, camera);
 
+
   objects.forEach((obj) => {
     obj.material.color.set(colours.White)
     obj.scale.set(1, 1, 1)
+    obj.raycast
 
   })
 
@@ -108,10 +111,11 @@ function animate() {
   suiCube.removeFromParent()
 
   const intersects = ray.intersectObjects(scene.children);
+
   scene.add(suiCube)
   if (intersects.length > 0) {
 
-    if (intersects[0].object instanceof THREE.Mesh<THREE.BoxGeometry, THREE.MeshStandardMaterial>) {
+    if (intersects[0].object instanceof THREE.Mesh<any, any>) {
       if (intersects[0].object != suiCube) {
         intersects[0].object.material.color.set(createColour(255, 0, 0));
         intersects[0].object.scale.set(1.5, 1.5, 1.5)
